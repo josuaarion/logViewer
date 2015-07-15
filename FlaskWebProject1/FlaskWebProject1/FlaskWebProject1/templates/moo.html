@@ -1,0 +1,114 @@
+﻿{% extends "base.html"  %}
+{% block content %}
+<br />
+<img src="static/pics/1183.jpg" />
+<div class="container">
+    <table>
+        <tr>
+            <h2>Translate for cows</h2>
+        </tr>
+        <tr>
+            <td width="30%">
+                <textarea rows="4" id="butt"></textarea>
+            </td>
+            <td width="20%">
+                Translates To:
+            </td>
+            <td width="30%">
+                <textarea rows="4" id="crack"></textarea>
+            </td>
+            <td width="20%">
+
+                <img id="cow" src="static/pics/cow-hi.png" />
+
+            </td>
+        </tr>
+    </table>
+</div>
+<script type="text/javascript">
+
+    
+    $(function () {
+
+        cowsays = function (str) {
+
+            var cowsay = ''
+            var space = true
+            var punc = true
+            var brak = false
+            var counter = 0
+
+            for (item in str) {
+
+                if (!isalpha(str[item])) {
+                    if (str[item] == '.' || str[item] == '?' || str[item] == '!' || str[item] == ':') {
+                        punc = true
+                    }
+                    cowsay += str[item]
+                    if (str[item] == '\n') {
+                        brak = true
+                    }
+                    if (str[item] === ' ') {
+                        cowsay += ' '
+                        space = true
+                    }
+                }
+                else if (space || brak) {
+                    if (isalpha(str[item])) {
+                        if (punc) {
+                            cowsay += 'M'
+                            punc = false
+                        }
+                        else if (str[counter] === str[counter].toUpperCase()) {
+                            cowsay += 'M'
+                        }
+                        else {
+                            cowsay += 'm'
+                        }
+                        space = false
+                        brak = false
+                    }
+                }
+                else if (isalpha(str[item])) {
+                    if (str[item] === str[item].toUpperCase()) {
+                        cowsay += 'O'
+                    }
+                    else {
+                        cowsay += 'o'
+                    }
+                }
+                counter += 1
+            }
+            
+            return cowsay
+        }
+
+        isalpha = function(str) {
+            return /^[a-zA-Z]+$/.test(str);
+        }
+
+        setInterval(function () {
+            element = document.getElementById("butt");
+            element2 = document.getElementById("crack");
+            
+            if (element.value !== '') {
+                //console.log('herna')
+                $("#cow").attr('src', 'static/pics/cow-hi2.png');
+
+            } else {
+
+                $("#cow").attr('src', 'static/pics/cow-hi.png');
+
+            }
+
+            element2.value = cowsays(element.value)
+            
+        }, 100)
+    });
+
+    
+</script>
+<img src="static/pics/grass.png" />
+
+
+{% endblock %}

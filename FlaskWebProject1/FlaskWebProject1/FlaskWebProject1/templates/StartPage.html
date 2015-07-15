@@ -1,0 +1,171 @@
+﻿{% extends "base.html"  %}
+{% block content %}
+<div class="container">
+    <div class="panel panel-primary">
+        <!-- Default panel contents -->
+        <div class="panel-heading">A pie chart that displays functioncalls per service</div>
+        <div class="panel-body">
+            <p>
+                here you can see how many function calls each service calls upon as a percentage of the total amount of function calls found in the database.
+                If you click on the links you will be able to see each individual service in more detail
+            </p>
+        </div>
+
+        <!-- Table -->
+        {% for item in list %}
+        <ul>
+            <li><a href="/{{item}}">{{item}}</a></li>
+        </ul>
+        {% endfor %}
+    </div>
+
+
+<br>
+ 
+    <!-- highcharts code for the piechart, this is not in a seperate file since you are unable to reference jinja2 code from there -->
+    <div id="pie" class="container col-xs-10">
+        <script type="text/javascript">
+
+            $(function () {
+               
+                //data for the inner pie
+                var drilldownSeries = []
+
+                //load data into drilldownSeries for each service name
+                {% for item in data2 %}
+                    var data = []
+                        
+                        //load data for each function name from the service
+                        {% for stuff in data2[item] %}
+                        data.push(['{{stuff}}',{{data2[item][stuff]}}])
+                        {% endfor %}
+                            
+                           //data for each function for each service
+                           var series ={
+                               id: '{{loop.index}}',
+                               name: '{{item}}',
+                               data: data,
+                               type: 'pie'
+                      
+                           }
+                            drilldownSeries.push(series)
+
+                    {% endfor %}
+
+                // Build the chart
+                $('#pie').highcharts({
+                    drilldown:{
+                        series: drilldownSeries                                             //data for the inner chart
+                        
+                    },
+                    chart: {                                                                // chart render detail
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false
+                    },
+                    title: {
+                        text: 'Percentage of function calls by service'
+                    },
+                    tooltip: {
+                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                    },
+                    plotOptions: {
+                        pie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                enabled: true,
+                                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                                style: {
+                                    color: 'black'
+                                }
+                            }
+                        }
+                    },
+                    series: [{                                                              //data for the outer pie chart that includes the connection to the appropriate drilldown
+                        type: 'pie',
+                        name: 'slice',
+                        data: [{% for item in data %}
+                                {drilldown: "{{loop.index}}", y:{{item[1]}}, name:'{{item[0]}}'} {% if not loop.last %},{% endif %} 
+
+                               {% endfor %}
+                            ]
+                        }]
+                });
+
+            });
+
+        </script>
+
+        <!-- for the buttons next to the pie chart -->
+    </div>
+    <form role="form" method="post">
+        <div class="form-group">
+            <div class="col-xs-2"><h4>Select period for data:</h4> </div>
+                <div class="col-xs-2">
+                    <input type="text" name="form" value="day" hidden ><br>
+                    <button type="submit" class="btn btn-default" id="button">Day    </button>
+                    
+                </div>
+
+            </div>
+    </form>
+
+
+    <form role="form" method="post">
+        <div class="form-group">
+            <div class="col-xs-2">
+
+                <input type="text" name="form" value="week" hidden><br>
+                <button type="submit" class="btn btn-default" id="button17" >Week    </button>
+                
+            </div>
+
+        </div>
+    </form>
+
+    <form role="form" method="post">
+        <div class="form-group">
+            <div class="col-xs-2">
+
+                <input type="text" name="form" value="month" hidden><br>
+                <button type="submit" class="btn btn-default" id="button14">Month</button>
+
+            </div>
+
+        </div>
+    </form>
+
+    <form role="form" method="post">
+        <div class="form-group">
+            <div class="col-xs-2">
+
+                <input type="text" name="form" value="year" hidden><br>
+                <button type="submit" class="btn btn-default" id="button11">Year</button>
+
+            </div>
+
+        </div>
+    </form>
+
+    <form role="form" method="post">
+        <div class="form-group">
+            <div class="col-xs-2">
+
+                <input type="text" name="form" value="all-time" hidden><br>
+                <button type="submit" class="btn btn-default" id="button10">All time</button>
+
+            </div>
+
+        </div>
+    </form>
+
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/drilldown.js"></script>
+
+
+{% endblock %}
+

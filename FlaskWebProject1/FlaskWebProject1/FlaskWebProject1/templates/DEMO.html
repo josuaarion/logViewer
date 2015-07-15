@@ -1,0 +1,26 @@
+<html>
+<head><title> DEMO </title></head>
+<body>
+	<h1> This is a demo</h1>
+	
+	<p> to see if the name {{name}} would show up</p>
+	
+	<p> and to see if my links below would appear</p>	
+
+	<h3>links below</h3>
+
+	<ul>
+		{%for item in learnt%}
+		<li><a href="http://www.google.com" > {{item}}</a> </li>
+		{%endfor%}
+	</ul>
+	
+	{%if value%}
+		<p>value was true</p>
+	{%else%}
+		<p>value was FALSE</p>
+	{%endif%}
+
+</body>
+
+</html>

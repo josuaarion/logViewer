@@ -1,0 +1,338 @@
+﻿{% extends "base.html"  %}
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="http://www.highcharts.com/media/com_demo/highslide.css" />
+<div class="funcGraph">
+    <h1 id="name">Functions for {{name}}</h1>
+    <div class="panel panel-primary">
+        <div class="panel-heading">Select the dates that you want to compare.</div>
+        <div class="panel-body ">
+            <form role="form" method="post">
+                <div class="form-group">
+                    <table>
+                        <tr>
+                            <td width="30%">
+                                <div class="padding">
+                                    <h4>Select date:</h4> <input type="datetime" class="form-control" placeholder="Startdate 1" id="id1" name="date" required>
+                                </div>
+                                    <script type="text/javascript">
+                                        date = $('#id1').datepicker()
+                                    </script>
+
+                            </td>
+
+                            <td width="30%">
+                                <div class ="padding">
+                                    <h4>Select comparison date:</h4><input type="datetime" class="form-control" placeholder="Startdate 2" id="id2" name="datedate" required>
+                                </div>
+                                    <script type="text/javascript">
+                                        $('#id2').datepicker()
+                                    </script>
+                            </td>
+
+                            <td width="30%">
+
+                                <div class="padding">
+                                    <h4>Select Span in months:</h4> <input type="number" class="form-control" name="span" placeholder="Span" min="1" max="12" required>
+                                </div>
+                            </td>
+
+                            <td width="25%">
+                                <div class="padding">
+                                    <h4>Submit:</h4> <button type="submit" class="btn btn-default" id="button">Get Data</button>
+                                </div>
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+            <!-- the date selection segment -->
+
+        </div>
+    </div>
+    <br />
+    <div >
+        <!-- make the charts for each function name in the service -->
+        <ul>
+            {% for item in data %}
+
+
+            <li>
+                <table>
+                    <thead></thead>
+                    <tbody>
+                        <tr>
+                            <td width="18%">
+                                <div class=" green">
+                                    <strong>Max</strong> = {{item.getStats()[0][0]}} <br /> <strong>Min</strong> = {{item.getStats()[0][1]}}<br /> <strong>Avg</strong> = {{item.getStats()[0][2]}}
+                                </div>
+
+                                <div class=" orange">
+                                    <strong>Max</strong> = {{item.getStats()[1][0]}}<br /> <strong>Min</strong> = {{item.getStats()[1][1]}}<br /> <strong>Avg</strong> = {{item.getStats()[1][2]}}
+                                </div>
+
+
+                                <div class=" blue">
+                                    <strong>Max</strong> = {{item.getStats()[2][0]}}<br /> <strong>Min</strong> = {{item.getStats()[2][1]}}<br /> <strong>Avg</strong> = {{item.getStats()[2][2]}}
+                                </div>
+
+
+                                <div class=" grey">
+                                    <strong>Max</strong> = {{item.getStats()[3][0]}}<br /> <strong>Min</strong> = {{item.getStats()[3][1]}}<br /> <strong>Avg</strong> = {{item.getStats()[3][2]}}
+                                </div>
+
+                            </td>
+                            <td width="60%">
+                                <div id="{{item.getName()}}"></div>
+                            </td>
+                            <td >
+                                <div id="{{item.getName()}}{{item.getName()}}"></div>
+                            </td>
+                        </tr>
+                        <br />
+                        <br />
+                        <br />
+                    </tbody>
+                </table>
+
+                                <!-- highcharts code for the chart, this is not in a seperate file since you are unable to reference jinja2 code from there -->
+                                <script type="text/javascript">
+
+
+                                    $(function () {
+
+                                        //the following segment is to load the default Detail Graph
+                                        var date = '{{dags2Y}}-{{dags2M}}-{{dags2D}}'
+                                        var nafn = '{{item.getName()}}'
+
+                                        //get data from SQL and then display it in the function that takes in the argument 'data'.
+                                        //this function calls views.py
+                                        $.getJSON('/{{name}}', {
+                                            name: nafn,
+                                            date: date
+                                        }, function (data) {
+
+                                            //to have the total amount of function calls for the subtitle
+                                            var total = 0;
+                                            for(var i = 0; i < data.number.length; i++){
+                                                total += data.number[i]
+                                            }
+
+                                            //draw the Detail graph
+                                            $('#{{item.getName()}}{{item.getName()}}').highcharts({
+
+                                                title: {
+                                                    text: 'Details for ' + data.date
+                                                },
+                                                subtitle: {text: 'Total calls: '+ total},
+                                                xAxis: {
+                                                    categories: data.hour
+                                                },
+                                                yAxis:{
+                                                    title: {text:'Number of calls'}
+                                                },
+                                                labels: {
+                                                    items: [{
+                                                        style: {
+
+                                                            left: '100px',
+                                                            top: '18px',
+                                                            color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                                                        }
+                                                    }]
+                                                },
+                                                series: [{
+                                                    type: 'column',
+                                                    name: 'Number of Calls per hour',
+                                                    data: data.number
+                                                }]
+                                            });
+                                        })
+
+                                        //draw the main graph
+                                        $('#{{item.getName()}}').highcharts({
+                                            title: {
+                                                text: 'Time for the function: {{item.getName()}}()'
+                                            },
+
+                                            xAxis: [{
+                                                type: 'datetime'
+                                            }, {
+                                                type: 'datetime',
+                                                opposite: true
+                                            }],
+
+                                            yAxis: [{ // left y axis
+
+                                                title: {
+                                                    text: 'Time in ms'
+                                                },
+
+                                            }, { // right y axis
+                                                opposite: true,
+                                                title: {
+                                                    text: 'Number of function calls'
+                                                }
+                                            }],
+
+                                            tooltip: {
+                                                shared: true,
+                                                crosshairs: true
+                                            },
+
+
+                                            plotOptions: {
+                                                series: {
+                                                    cursor: 'pointer',
+                                                    point: {
+                                                        events: {
+                                                            click: function (e) {  // this segment is carried out if you press a point in the main graph
+
+                                                                // what is displayd on the main chart
+                                                                hs.htmlExpand(null, {
+                                                                    pageOrigin: {
+                                                                        x: e.pageX || e.clientX,
+                                                                        y: e.pageY || e.clientY
+                                                                    },
+                                                                    headingText: 'Detail',
+                                                                    maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':<br/> ' +
+                                                                        this.y + ' ms'
+                                                                    ,
+                                                                    width: 200
+                                                                });
+
+                                                                //gets data from the parameters passed on by the click info to connect to views.py which
+                                                                //connects to the database and returns data for the detail graph that is then drawn
+                                                                var date = Highcharts.dateFormat('%Y-%m-%d', this.x)
+                                                                var funcName = '{{item.getName()}}'
+
+                                                                function babb (date, nafn) {
+                                                                    $.getJSON('/{{name}}', {
+                                                                        name: nafn,
+                                                                        date: date
+                                                                    }, function (data) {
+                                                                        var total = 0;
+                                                                        for(var i = 0; i < data.number.length; i++){
+                                                                            total += data.number[i]
+                                                                        }
+                                                                        $('#{{item.getName()}}{{item.getName()}}').highcharts({
+
+                                                                            title: {
+                                                                                text: 'Details for ' + data.date
+
+                                                                            },subtitle: {text: 'Total calls: '+ total},
+                                                                            xAxis: {
+                                                                                categories: data.hour
+
+                                                                            },
+                                                                            yAxis:{
+                                                                                title: {text:'Number of calls'}
+                                                                            },
+                                                                            labels: {
+                                                                                items: [{
+                                                                                    style: {
+
+                                                                                        left: '100px',
+                                                                                        top: '18px',
+                                                                                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                                                                                    }
+                                                                                }]
+                                                                            },
+                                                                            series: [{
+                                                                                type: 'column',
+                                                                                name: 'Number of Calls per hour',
+                                                                                data: data.number
+                                                                            }]
+                                                                        });
+                                                                    })
+                                                                };
+
+                                                                babb(date, funcName)
+
+                                                            }
+
+                                                        }
+                                                    }
+                                                },
+                                                marker: {
+                                                    lineWidth: 1
+                                                }
+
+                                            },
+
+                                            series:[{ //data for the first column
+                                                name: 'Number of function calls for dates from {{dags1Y}}-{{dags1M}}-{{dags1D}}',
+                                                type: 'column',
+                                                xAxis: 0,
+                                                yAxis: 1,
+                                                data: {{item.getData()[2]}},
+                                                tooltip: {
+                                            valueSuffix: ' calls'
+                                                },
+                                        pointStart: Date.UTC({{dags1Y}}, {{dags1M}}-1, {{dags1D}}),
+                                        pointInterval: 24 * 3600 * 1000 // one day
+
+                                    },
+                                                 { //data for the second column
+                                                     name: 'Number of function calls for dates from {{dags2Y}}-{{dags2M}}-{{dags2D}}',
+                                                     type: 'column',
+                                                     xAxis: 1,
+                                                     yAxis: 1,
+                                                     data: {{item.getData()[3]}},
+
+                                        tooltip: {
+                                        valueSuffix: ' calls'
+                                        },
+                                    pointStart: Date.UTC({{dags2Y}}, {{dags2M}}-1, {{dags2D}}),
+                                        pointInterval: 24 * 3600 * 1000 // one day
+
+                                    } ,{ //data for the first line
+                                        data: {{item.getData()[0]}},
+                                        pointStart: Date.UTC({{dags1Y}}, {{dags1M}}-1, {{dags1D}}),
+                                        pointInterval: 24 * 3600 * 1000, // one day
+                                        name: 'Dates from {{dags1Y}}-{{dags1M}}-{{dags1D}}',
+                                        lineWidth: 4,
+                                        xAxis: 0,
+                                        yAxis: 0,
+                                        marker: {
+                                            radius: 4
+                                        }
+                                    }, { //data for the second line
+                                    data: {{item.getData()[1]}},
+                                    pointStart: Date.UTC({{dags2Y}}, {{dags2M}}-1, {{dags2D}}),
+                                        pointInterval: 24 * 3600 * 1000, // one day
+                                    xAxis: 1,
+                                    yAxis: 0,
+                                    name: 'Dates from {{dags2Y}}-{{dags2M}}-{{dags2D}}',
+                                    lineWidth: 4,
+
+                                    marker: {
+                                        radius: 4
+                                    }
+                                    }]
+                                    });
+                                    });
+
+                                </script>
+</li>
+
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/data.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+<!-- Additional files for the Highslide popup effect -->
+<script type="text/javascript" src="http://www.highcharts.com/media/com_demo/highslide-full.min.js"></script>
+<script type="text/javascript" src="http://www.highcharts.com/media/com_demo/highslide.config.js" charset="utf-8"></script>
+
+{% endblock %}
+
+

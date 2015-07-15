@@ -1,0 +1,277 @@
+﻿{% extends "base.html"  %}
+    {% block content %}
+
+<div >
+    <h1>Statuses</h1>
+    <!-- for loop to render all the services-->
+    {% for flag in flags %}
+    <ul class="col-lg-8">
+
+        <!-- the if statements are for checking if the status is ok or not-->
+        {% if flag[0] == False %}
+
+
+        <li id="{{flag[3]}}{{flag[3]}}nok">
+            <table id="check" class="check_error">
+                <thead></thead>
+                <tbody>
+                    <tr>
+                        <td width="10%">
+                            <img class="icon-align-center" src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-error-icon.png">
+                        </td>
+                        <td>
+                            <a href="/{{flag[1]}}" style="color: black;"><h3>{{flag[1]}}</h3></a>
+                            <p>This service Contains some errors</p> click <a href="{{flag[2]}}">here</a> for detail</p>
+                        </td>
+                        <td width="20%">
+                            <p>Click <a href="/StartPage">here</a> for detail about all services</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </li>
+
+        {% else %}
+
+
+        <li id="{{flag[3]}}{{flag[3]}}ok">
+            <table id="check" class="check_ok">
+                <thead></thead>
+                <tbody>
+                    <tr>
+                        <td width="10%">
+                            <img class="icon-align-center" src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-check-icon.png">
+                        </td>
+                        <td>
+                            <a href="/{{flag[1]}}" style="color: black;"><h3>{{flag[1]}}</h3></a>
+                            <p>is A-ok</p>click <a href="{{flag[2]}}">here</a> for details about the service</p>
+                        </td>
+                        <td width="20%">
+                            <p>Click <a href="/StartPage">here</a> for detail about all services</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </li>
+
+
+            {% endif %}
+</ul>
+    <div class="col-lg-2"><p></p></div>
+    <div id="{{flag[3]}}" class="col-lg-7" style="height:200px;">
+        <script type="text/javascript">
+
+            $(function(){
+                var x = (new Date()).getTime()
+
+                $('#{{flag[3]}}').highcharts({
+                    chart: {
+                        type: 'spline',
+                        animation: Highcharts.svg, // don't animate in old IE
+
+                        events: {
+                            load: function () {
+
+                                //console.log('start')
+
+                                // update the series with a new point that we get from the getJSON function
+                                var series = this.series[0];
+                                var series2 = this.series[1];
+                                var series3 = this.series[2];
+                                var series4 = this.series[3];
+
+                                //var TheData = [this.series[0],this.series[1], this.series[2], this.series[3]];
+                                
+
+                                setInterval(function () {
+                                
+                                    //this is used to update the initial data in the views.py function, I do this so that when you go off the front page and then back again later,
+                                    //you don't see the initial data from the first time.
+                                //input = {'name':'{{flag[3]}}','first':series.data[0].series.yData, 'second':series2.data[0].series.yData, 'third':series3.data[0].series.yData, 'fourth':series4.data[0].series.yData}
+                                
+
+                                    $.getJSON('/frontPage', {
+                                        name:'{{flag[3]}}'
+                                        //hades: JSON.stringify(input)
+                                    }, function (data) {
+
+                                        //new points
+                                        y = data.now;
+                                        y2 = data.then;
+                                        y3 = data.nowC;
+                                        y4 = data.thenC;
+
+                                        //load them in
+                                        series2.addPoint([y], true, true);
+                                        series.addPoint([y2], true, true);
+                                        series3.addPoint([y4], true, true);
+                                        series4.addPoint([y3], true, true);
+                                
+                                        //if setningar til ad refresha status kassana 
+                                        if("{{flag[3]}}" === "collateral"){
+                                            if(data.flags[0][0]){
+                                                document.getElementById("{{flag[3]}}{{flag[3]}}ok").style.display = "";
+                                            }else{
+                                                document.getElementById("{{flag[3]}}{{flag[3]}}nok").style.display = "";
+                                            }
+                                        }else if("{{flag[3]}}" === "accounts"){
+                                            if(data.flags[1][0]){
+                                                document.getElementById("{{flag[3]}}{{flag[3]}}ok").style.display = "";
+                                            }else{
+                                                document.getElementById("{{flag[3]}}{{flag[3]}}nok").style.display = "";
+                                            }
+                                        }else if("{{flag[3]}}" === "creditcards"){
+                                            if(data.flags[2][0]){
+                                                document.getElementById("{{flag[3]}}{{flag[3]}}ok").style.display = "";
+                                            }else{
+                                                document.getElementById("{{flag[3]}}{{flag[3]}}nok").style.display = "";
+                                            }
+                                        }else{
+                                            if(data.flags[3][0]){
+                                                document.getElementById("{{flag[3]}}{{flag[3]}}ok").style.display = "";
+                                            }else{
+                                                document.getElementById("{{flag[3]}}{{flag[3]}}nok").style.display = "";
+                                            }
+                                        }
+                                
+                                        //syna grofin
+                                        document.getElementById("{{flag[3]}}").style.display = "";
+                               
+                                    })
+
+                                    
+                                }, 10*60000);
+                                
+                            }
+                        }
+                    },
+
+                    title: {
+                        text: ''
+                    },
+
+                    xAxis: [{
+                        type: 'datetime'
+                    }],
+
+                    yAxis: [{ // left y axis
+
+                        title: {
+                            text: 'Time in ms'
+                        }
+
+                    },{ // right y axis
+                        opposite: true,
+                        title: {
+                            text: 'Number of function calls'
+                        }
+                    }],
+
+                    tooltip: {
+                        shared: true,
+                        crosshairs: true
+                    },
+
+
+                    plotOptions: {
+                        series: {
+                            cursor: 'pointer',
+                            fillOpacity: 0.3
+                        },
+                        marker: {
+                            lineWidth: 1
+                        }
+
+                    },
+                    series: [{ //speed data from last week
+                        data: {{SD[1][flag[3]]}},
+                        pointStart: (function () {
+                       
+                            var time = (new Date()).getTime() - 60000*5*60
+                            return time
+
+                        }()),
+                pointInterval:  600 * 1000,
+                name: 'avrage speed of service from last week',
+                type: 'area',
+                lineWidth: 2,
+                yAxis: 0,
+                marker: {
+                    radius: 2
+                },
+                tooltip: {
+                    valueSuffix: ' ms'
+                }
+            }
+
+                     , { //speed data from today
+                         data: {{SD[0][flag[3]]}},
+                         pointStart: (function () {
+                             var time = (new Date()).getTime() - 60000*5*60
+                             return time
+
+                         }()),
+                         pointInterval:  600 * 1000,
+                         name: 'avrage speed of service',
+                         type: 'line',
+                         lineWidth: 2,
+                         yAxis: 0,
+                         marker: {
+                             radius: 2
+                         },
+                         tooltip: {
+                             valueSuffix: ' ms'
+                         }
+                     },
+            
+            
+            {   //number of fuction calls from last week
+                data: {{SD[1][flag[3]+flag[3]]}},
+                pointStart: (function () {
+                    var time = (new Date()).getTime() - 60000*5*60
+                    return time
+
+                }()),
+                pointInterval:  600 * 1000,
+                name: 'number of function calls last week',
+                type: 'column',
+                yAxis: 1,
+
+                tooltip: {
+                    valueSuffix: ' calls'
+                }
+            }
+
+                     , {//number of fuction calls from today
+                         data: {{SD[0][flag[3]+flag[3]]}},
+                         pointStart: (function () {
+
+                             var time = (new Date()).getTime() - 60000*5*60
+                             return time
+
+                         }()),
+                         pointInterval:  600 * 1000,
+                         name: 'number of function calls',
+                         yAxis: 1,
+                         type: 'column',
+
+                         tooltip: {
+                             valueSuffix: ' calls'
+                         }
+                     }]
+            })
+
+
+            });
+
+
+        </script>
+    </div>
+
+    {% endfor %}
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+
+</div>
+
+{% endblock %}

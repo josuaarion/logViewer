@@ -1,0 +1,11 @@
+﻿{% extends "base.html"  %}
+{% block content %}
+<div id="funcGraph">
+    <h1>Functions for CreditCardService</h1>
+    {% for item in functions %}
+    <ul>
+        <li><h3>{{item}}()</h3> <img src="static\images\{{item}}.png"> </li>
+    </ul>
+    {% endfor %}
+</div>
+{% endblock %}

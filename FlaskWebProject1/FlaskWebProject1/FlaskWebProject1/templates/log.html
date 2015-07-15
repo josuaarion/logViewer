@@ -1,0 +1,29 @@
+﻿{% extends "base.html"  %}
+    {% block content %}
+<div class="col-xs-5"></div>
+<div class="col-xs-6">
+    <h1>Login</h1>
+    {% if error %}
+    <p class=error>
+        Error: {{error}}
+        {% endif %}
+        <form method=post>
+            <dl>
+                <dt>Username:
+                <dd><input type=text name=userrname value="{{request.form.username}}">
+
+                <dt>Password:
+                <dd><input type=password name=password>
+
+
+            </dl>
+        <input type=submit value=Login>
+        </form>
+    </p>
+        {% for message in get_flashed_messages() %}
+        <div class=flash>
+            {{message}}
+        </div>
+        {% endfor %}
+</div>
+        {% endblock %}

@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="static/datepicker/js/bootstrap-datepicker.js"></script>
+
+    <title>Statistics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='content/bootstrap.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='datepicker/css/datepicker.css')}}">
+
+
+</head>
+<body>
+    <header class="navbar navbar-inverse form-inline">
+        <h1 >Audit Logger 3000</h1>
+        <nav>
+            <a class="brand btn btn-primary" href="/StartPage"> Home</a>
+            <ul class="nav">
+                <li role="presentation" class="active"><a href="/frontPage">Statuses</a></li>
+                <li role="presentation" class="active"><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    {% block content %}
+    {% endblock %}
+
+    <br />
+    
+
+    <footer class="container">
+        <br />
+        <br />
+        <br />
+        <br />
+        <h4 class="center"> audit logger 3000  -  </h4> <a href="/logout" class="btn btn-default center"> Logout</a>
+    </footer>
+
+    
+
+    </body>
+</html>
