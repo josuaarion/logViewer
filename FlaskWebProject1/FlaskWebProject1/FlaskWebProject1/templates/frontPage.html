@@ -11,17 +11,17 @@
         {% if flag[0] == False %}
 
 
-        <li id="{{flag[3]}}{{flag[3]}}nok">
-            <table id="check" class="check_error">
+        <li id="{{flag[3]}}{{flag[3]}}">
+            <table id="check{{flag[3]}}" class="check_error">
                 <thead></thead>
                 <tbody>
                     <tr>
                         <td width="10%">
-                            <img class="icon-align-center" src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-error-icon.png">
+                            <img id="pic{{flag[3]}}" class="icon-align-center" src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-error-icon.png">
                         </td>
                         <td>
                             <a href="/{{flag[1]}}" style="color: black;"><h3>{{flag[1]}}</h3></a>
-                            <p>This service Contains some errors</p> click <a href="{{flag[2]}}">here</a> for detail</p>
+                            <p id="m{{flag[3]}}">Contains some errors</p> click <a href="{{flag[2]}}">here</a> for details about the service</p>
                         </td>
                         <td width="20%">
                             <p>Click <a href="/StartPage">here</a> for detail about all services</p>
@@ -31,20 +31,22 @@
             </table>
         </li>
 
+
+
         {% else %}
 
 
-        <li id="{{flag[3]}}{{flag[3]}}ok">
-            <table id="check" class="check_ok">
+        <li id="{{flag[3]}}{{flag[3]}}">
+            <table id="check{{flag[3]}}" class="check_ok">
                 <thead></thead>
                 <tbody>
                     <tr>
                         <td width="10%">
-                            <img class="icon-align-center" src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-check-icon.png">
+                            <img id="pic{{flag[3]}}" class="icon-align-center" src="http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-check-icon.png">
                         </td>
                         <td>
                             <a href="/{{flag[1]}}" style="color: black;"><h3>{{flag[1]}}</h3></a>
-                            <p>is A-ok</p>click <a href="{{flag[2]}}">here</a> for details about the service</p>
+                            <p id="m{{flag[3]}}">is A-ok</p>click <a href="{{flag[2]}}">here</a> for details about the service</p>
                         </td>
                         <td width="20%">
                             <p>Click <a href="/StartPage">here</a> for detail about all services</p>
@@ -87,7 +89,7 @@
                                 
                                     //this is used to update the initial data in the views.py function, I do this so that when you go off the front page and then back again later,
                                     //you don't see the initial data from the first time.
-                                //input = {'name':'{{flag[3]}}','first':series.data[0].series.yData, 'second':series2.data[0].series.yData, 'third':series3.data[0].series.yData, 'fourth':series4.data[0].series.yData}
+                                    //input = {'name':'{{flag[3]}}','first':series.data[0].series.yData, 'second':series2.data[0].series.yData, 'third':series3.data[0].series.yData, 'fourth':series4.data[0].series.yData}
                                 
 
                                     $.getJSON('/frontPage', {
@@ -109,28 +111,49 @@
                                 
                                         //if setningar til ad refresha status kassana 
                                         if("{{flag[3]}}" === "collateral"){
+											
+											
                                             if(data.flags[0][0]){
-                                                document.getElementById("{{flag[3]}}{{flag[3]}}ok").style.display = "";
+                                                document.getElementById("check{{flag[3]}}").className = "check_ok";
+                                                document.getElementById("pic{{flag[3]}}").src = "http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-check-icon.png"
+                                                document.getElementById("m{{flag[3]}}").innerText = "is A-ok"
                                             }else{
-                                                document.getElementById("{{flag[3]}}{{flag[3]}}nok").style.display = "";
+                                                document.getElementById("check{{flag[3]}}").className = "check_error";
+                                                document.getElementById("pic{{flag[3]}}").src = "http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-error-icon.png"
+                                                document.getElementById("m{{flag[3]}}").innerText = "Contains some errors"
                                             }
                                         }else if("{{flag[3]}}" === "accounts"){
+
                                             if(data.flags[1][0]){
-                                                document.getElementById("{{flag[3]}}{{flag[3]}}ok").style.display = "";
+                                                document.getElementById("check{{flag[3]}}").className = "check_ok";
+                                                document.getElementById("pic{{flag[3]}}").src = "http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-check-icon.png"
+                                                document.getElementById("m{{flag[3]}}").innerText = "is A-ok"
                                             }else{
-                                                document.getElementById("{{flag[3]}}{{flag[3]}}nok").style.display = "";
+                                                document.getElementById("check{{flag[3]}}").className = "check_error";
+                                                document.getElementById("pic{{flag[3]}}").src = "http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-error-icon.png"
+                                                document.getElementById("m{{flag[3]}}").innerText = "Contains some errors"
                                             }
                                         }else if("{{flag[3]}}" === "creditcards"){
+
                                             if(data.flags[2][0]){
-                                                document.getElementById("{{flag[3]}}{{flag[3]}}ok").style.display = "";
+                                                document.getElementById("check{{flag[3]}}").className = "check_ok";
+                                                document.getElementById("pic{{flag[3]}}").src = "http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-check-icon.png"
+                                                document.getElementById("m{{flag[3]}}").innerText = "is A-ok"
                                             }else{
-                                                document.getElementById("{{flag[3]}}{{flag[3]}}nok").style.display = "";
+                                                document.getElementById("check{{flag[3]}}").className = "check_error";
+                                                document.getElementById("pic{{flag[3]}}").src = "http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-error-icon.png"
+                                                document.getElementById("m{{flag[3]}}").innerText = "Contains some errors"
                                             }
                                         }else{
+
                                             if(data.flags[3][0]){
-                                                document.getElementById("{{flag[3]}}{{flag[3]}}ok").style.display = "";
+                                                document.getElementById("check{{flag[3]}}").className = "check_ok";
+                                                document.getElementById("pic{{flag[3]}}").src = "http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-check-icon.png"
+                                                document.getElementById("m{{flag[3]}}").innerText = "is A-ok"
                                             }else{
-                                                document.getElementById("{{flag[3]}}{{flag[3]}}nok").style.display = "";
+                                                document.getElementById("check{{flag[3]}}").className = "check_error";
+                                                document.getElementById("pic{{flag[3]}}").src = "http://icons.iconarchive.com/icons/paomedia/small-n-flat/64/sign-error-icon.png"
+                                                document.getElementById("m{{flag[3]}}").innerText = "Contains some errors"
                                             }
                                         }
                                 

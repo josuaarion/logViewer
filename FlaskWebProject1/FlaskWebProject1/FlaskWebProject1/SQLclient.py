@@ -2,6 +2,7 @@ import pypyodbc
 import datetime
 import random
 import time
+import threading
 
 #Strings to be used to create the aggrigate tables
 AggTable = """CREATE TABLE dbo.Aggrigate(TimeStamp datetime2(7),ServiceName varchar(100),count Integer, date varchar(10), functionName varchar(100));"""
@@ -219,7 +220,7 @@ def update_data_from_query(newData, cursor, query, i):
 
 #class that connects to the database
 class connect_to_DB():
-
+     
     #set up the connection
     def __init__(self):
 
@@ -248,6 +249,11 @@ class connect_to_DB():
     #function to get the cursor for the connection
     def get_cursor(self):
         return self.curr
+
+    def close(self):
+        self.curr.close()
+        self.connection.close()
+        print('connection closed')
 
 #function that uses the cursor to connect to the database and perform a Query. then returns the result for that query
 def get_data(Query, cursor):
@@ -571,12 +577,14 @@ def formatRealTimeData(data, service):
 
     return newData
 
+#a thread worker that is used to execute the queries from the function getInitialRealTime()
+def worker(query,cursor,flag,i,data):
+    result_set = get_data(query, cursor)
+    data[i] = formatInitRealTimeData(result_set, flag)
+
 
 #function to get all the initial pionts for all the different services for the frontpage
 def getInitialRealTime(cursor,date):
-
-    #container for the final data
-    data = [None,None]
 
     #flag for the formatter to have the correct size of the container
     flag = False
@@ -602,14 +610,9 @@ def getInitialRealTime(cursor,date):
 	GROUP BY DATEPART(DAY, B.StartTime),DATEPART(HOUR,B.StartTime),DATEPART(Minute, B.StartTime)/10, A.ServiceId
 	ORDER BY A.ServiceId, DATEPART(DAY, B.StartTime),DATEPART(HOUR,B.StartTime),DATEPART(Minute, B.StartTime)/10
 	"""
-    result_set = get_data(query, cursor)
-
-    #format the data and put it into the container
-    data[0] = formatInitRealTimeData(result_set, flag)
-
 
     #query to get speed and number of function calls for all the services for a date a week earlier then the one above
-    query = """    DECLARE @date123 datetime = '"""+date+"""'
+    query2 = """    DECLARE @date123 datetime = '"""+date+"""'
     DECLARE @date datetime = (SELECT DATEADD(day,-7, @date123))
     DECLARE @date2 datetime = (SELECT DATEADD(hour,-5, @date))
     declare @Hstart integer = (SELECT DATEPART(HOUR,@date2)*6)
@@ -628,10 +631,22 @@ def getInitialRealTime(cursor,date):
 	ORDER BY A.ServiceId, DATEPART(DAY, B.StartTime),DATEPART(HOUR,B.StartTime),DATEPART(Minute, B.StartTime)/10
 	"""
 
-    result_set = get_data(query, cursor)
+    #make new connections to access the database concurrently with two threads. i do this to cut the time from 22 secs to 11 secs
+    connections = [connect_to_DB(),connect_to_DB()]
 
-    #format the data and store it in the container
-    data[1] = formatInitRealTimeData(result_set, flag)
+    #container for the final data
+    data = [None,None]
+
+    threads = [None,None]
+
+    querys = [query,query2]
+    for i in range(len(threads)):
+        threads[i] = threading.Thread(target=worker, args=(querys[i],connections[i].get_cursor(),flag,i,data,))
+        threads[i].start()
+
+    for i in range(len(threads)):
+        threads[i].join()
+        connections[i].close()
 
     return data
 
