@@ -99,7 +99,6 @@ def frontPage():
     #in that case we go here to answer the response...
     if service != '':
 
-
         SpanData = audit.getRealTime(then, service)
         #format data for Json with the data from DetailData
         service2 = str(service)+str(service)
@@ -210,12 +209,19 @@ def general(service):
         #get dates from the calendar 
         dags1 = request.form['datedate']
         dags2 = request.form['date']
+        if not isinstance(dags1, datetime.date) or not isinstance(dags2, datetime.date):
+            now = datetime.datetime.now().date()
+            then = now - datetime.timedelta(days = 30.0)
 
-        #refactor dates to get the right format for the SQL query returns [date1,date2]
-        dates = SQLclient.refactorDates(dags1,dags2)
+            dates =[str(now),str(then)]
+        else:
+            #refactor dates to get the right format for the SQL query returns [date1,date2]
+            dates = SQLclient.refactorDates(dags1,dags2)
 
         #get the span from site
         span = request.form['span']
+        if  not span.isdigit():
+            span = 1
 
         #functions is a data array that looks like this: [datapacket for speed of service, datapacket for the number of function calls, name of the functions for the service]
         # the data gathered is found through SQL with the parameters given

@@ -148,7 +148,6 @@ def getStats(cursor, service, date1, date2, span):
 #function to get the dates from datetime format onto string format in order to be able to use them better in the SQL query
 def refactorDates(date1,date2):
 
-    #break the dates down to the formats YYYY-MM-DD...
     year1 = date1[6:10]
     year2 = date2[6:10]
 
