@@ -1,0 +1,9 @@
+c:\users\josua\documents\visual studio 2013\Projects\Soduko_solver\Soduko_solver\bin\Debug\Soduko_solver.exe.config
+c:\users\josua\documents\visual studio 2013\Projects\Soduko_solver\Soduko_solver\bin\Debug\Soduko_solver.exe
+c:\users\josua\documents\visual studio 2013\Projects\Soduko_solver\Soduko_solver\bin\Debug\Soduko_solver.pdb
+c:\users\josua\documents\visual studio 2013\Projects\Soduko_solver\Soduko_solver\obj\Debug\Sudoku_solver.csprojResolveAssemblyReference.cache
+c:\users\josua\documents\visual studio 2013\Projects\Soduko_solver\Soduko_solver\obj\Debug\Soduko_solver.Form1.resources
+c:\users\josua\documents\visual studio 2013\Projects\Soduko_solver\Soduko_solver\obj\Debug\Soduko_solver.Properties.Resources.resources
+c:\users\josua\documents\visual studio 2013\Projects\Soduko_solver\Soduko_solver\obj\Debug\Sudoku_solver.csproj.GenerateResource.Cache
+c:\users\josua\documents\visual studio 2013\Projects\Soduko_solver\Soduko_solver\obj\Debug\Soduko_solver.exe
+c:\users\josua\documents\visual studio 2013\Projects\Soduko_solver\Soduko_solver\obj\Debug\Soduko_solver.pdb
